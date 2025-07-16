@@ -59,6 +59,18 @@ class QRCodeGenerator {
             return;
         }
 
+        // セキュリティ: 入力値の検証とサニタイズ
+        if (text.length > 2000) {
+            this.showError('テキストが長すぎます（2000文字以下）');
+            return;
+        }
+
+        // XSS対策: 危険な文字列をチェック
+        if (this.containsXSS(text)) {
+            this.showError('無効な文字が含まれています');
+            return;
+        }
+
         const size = parseInt(this.sizeSelect.value);
         const fgColor = this.fgColorInput.value;
         const bgColor = this.bgColorInput.value;
@@ -150,12 +162,23 @@ class QRCodeGenerator {
     }
 
     showError(message) {
-        this.qrPreview.innerHTML = `
-            <div class="placeholder">
-                <i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i>
-                <p style="color: #dc3545;">${message}</p>
-            </div>
-        `;
+        // XSS対策: テキストを安全に設定
+        const placeholder = document.createElement('div');
+        placeholder.className = 'placeholder';
+        
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-exclamation-triangle';
+        icon.style.color = '#dc3545';
+        
+        const p = document.createElement('p');
+        p.style.color = '#dc3545';
+        p.textContent = message; // innerHTML ではなく textContent を使用
+        
+        placeholder.appendChild(icon);
+        placeholder.appendChild(p);
+        
+        this.qrPreview.innerHTML = '';
+        this.qrPreview.appendChild(placeholder);
         this.qrPreview.classList.remove('has-qr');
         this.downloadBtn.disabled = true;
     }
@@ -177,7 +200,16 @@ class QRCodeGenerator {
             transform: translateY(-20px);
             transition: all 0.3s ease;
         `;
-        successDiv.innerHTML = `<i class="fas fa-check"></i> ${message}`;
+        
+        // XSS対策: 安全にメッセージを設定
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-check';
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = ` ${message}`;
+        
+        successDiv.appendChild(icon);
+        successDiv.appendChild(textSpan);
         document.body.appendChild(successDiv);
 
         setTimeout(() => {
@@ -316,17 +348,27 @@ class QRCodeGenerator {
     }
 
     showFallbackQR(text) {
-        // Fallback to API service
+        // セキュリティ: テキストを検証
+        if (this.containsXSS(text)) {
+            this.showError('無効な文字が含まれています');
+            return;
+        }
+        
+        // Fallback to API service (HTTPS強制)
         const size = parseInt(this.sizeSelect.value);
         const fgColor = this.fgColorInput.value.replace('#', '');
         const bgColor = this.bgColorInput.value.replace('#', '');
         
-        const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}&color=${fgColor}&bgcolor=${bgColor}`;
+        // セキュリティ: URLパラメータをさらに検証
+        const safeText = encodeURIComponent(text.substring(0, 2000));
+        const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${safeText}&color=${fgColor}&bgcolor=${bgColor}`;
         
         const img = document.createElement('img');
         img.src = apiUrl;
         img.style.maxWidth = '100%';
         img.style.borderRadius = '10px';
+        img.alt = 'Generated QR Code'; // アクセシビリティ向上
+        
         img.onload = () => {
             this.qrPreview.innerHTML = '';
             this.qrPreview.appendChild(img);
@@ -383,6 +425,34 @@ class QRCodeGenerator {
         if (qrCountElement) {
             qrCountElement.textContent = this.qrGeneratedCount.toLocaleString();
         }
+    }
+
+    containsXSS(text) {
+        // XSS攻撃パターンを検出
+        const xssPatterns = [
+            /<script/i,
+            /javascript:/i,
+            /vbscript:/i,
+            /onload=/i,
+            /onerror=/i,
+            /onclick=/i,
+            /onmouseover=/i,
+            /<iframe/i,
+            /<embed/i,
+            /<object/i
+        ];
+        
+        return xssPatterns.some(pattern => pattern.test(text));
+    }
+
+    sanitizeInput(text) {
+        // HTMLエスケープ
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     trackEvent(eventName, params) {
