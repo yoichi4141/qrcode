@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Pro - プロフェッショナルQRコード生成サービス</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-qrcode"></i>
+                <h1>QR Code Pro</h1>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-link">ホーム</a>
+                <a href="#" class="nav-link">料金</a>
+                <a href="#" class="nav-link premium">プレミアム</a>
+            </nav>
+        </header>
+
+        <main class="main">
+            <section class="hero">
+                <h2>プロフェッショナルなQRコードを簡単生成</h2>
+                <p>カスタマイズ可能な高品質QRコードで、あなたのビジネスを次のレベルへ</p>
+                <div class="portfolio-badge">
+                    <span>📱 ポートフォリオデモ版</span>
+                </div>
+            </section>
+
+            <div class="generator-container">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label for="text-input">テキスト・URL</label>
+                        <textarea id="text-input" placeholder="QRコードにしたいテキストやURLを入力してください" rows="3"></textarea>
+                    </div>
+
+                    <div class="options-grid">
+                        <div class="input-group">
+                            <label for="size-select">サイズ</label>
+                            <select id="size-select">
+                                <option value="200">200x200px</option>
+                                <option value="400" selected>400x400px</option>
+                                <option value="600">600x600px</option>
+                                <option value="800">800x800px (プレミアム)</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="fg-color">前景色</label>
+                            <input type="color" id="fg-color" value="#000000">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="bg-color">背景色</label>
+                            <input type="color" id="bg-color" value="#ffffff">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="error-level">エラー訂正レベル</label>
+                            <select id="error-level">
+                                <option value="L">低 (L)</option>
+                                <option value="M" selected>中 (M)</option>
+                                <option value="Q">高 (Q)</option>
+                                <option value="H">最高 (H)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="premium-features">
+                        <h3><i class="fas fa-crown"></i> プレミアム機能</h3>
+                        <div class="feature-grid">
+                            <div class="feature-item premium-locked">
+                                <i class="fas fa-image"></i>
+                                <span>ロゴ埋め込み</span>
+                                <button class="unlock-btn">解除</button>
+                            </div>
+                            <div class="feature-item premium-locked">
+                                <i class="fas fa-chart-line"></i>
+                                <span>スキャン解析</span>
+                                <button class="unlock-btn">解除</button>
+                            </div>
+                            <div class="feature-item premium-locked">
+                                <i class="fas fa-download"></i>
+                                <span>一括生成</span>
+                                <button class="unlock-btn">解除</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="generate-btn" class="primary-btn">
+                            <i class="fas fa-magic"></i>
+                            QRコード生成
+                        </button>
+                        <button id="download-btn" class="secondary-btn" disabled>
+                            <i class="fas fa-download"></i>
+                            ダウンロード
+                        </button>
+                    </div>
+                </div>
+
+                <div class="preview-section">
+                    <div class="preview-container">
+                        <div class="preview-header">
+                            <h3>プレビュー</h3>
+                            <div class="quality-badge">HD品質</div>
+                        </div>
+                        <div id="qr-preview" class="qr-preview">
+                            <div class="placeholder">
+                                <i class="fas fa-qrcode"></i>
+                                <p>QRコードがここに表示されます</p>
+                            </div>
+                        </div>
+                        <div class="preview-info">
+                            <span id="size-info">サイズ: 400x400px</span>
+                            <span id="error-info">エラー訂正: M</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="qr-generated-count">0</div>
+                    <div class="stat-label">生成済みQRコード</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="visitor-count">0</div>
+                    <div class="stat-label">訪問者数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">デモ版</div>
+                    <div class="stat-label">ポートフォリオ</div>
+                </div>
+            </section>
+
+            <section class="pricing">
+                <h2>料金プラン <span class="demo-label">（デモ版）</span></h2>
+                <div class="demo-notice">
+                    <p>📌 このデモ版では全ての機能を無料で体験できます。実際のサービスでは以下の料金体系となります。</p>
+                </div>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>無料プラン</h3>
+                        <div class="price">¥0<span>/月</span></div>
+                        <ul>
+                            <li><i class="fas fa-check"></i> 基本的なQRコード生成</li>
+                            <li><i class="fas fa-check"></i> 標準サイズ (400x400)</li>
+                            <li><i class="fas fa-check"></i> 色のカスタマイズ</li>
+                            <li><i class="fas fa-times"></i> ロゴ埋め込み</li>
+                            <li><i class="fas fa-times"></i> 解析機能</li>
+                        </ul>
+                        <button class="plan-btn">デモ版で体験</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <h3>プレミアム</h3>
+                        <div class="price">¥980<span>/月</span></div>
+                        <ul>
+                            <li><i class="fas fa-check"></i> すべての無料機能</li>
+                            <li><i class="fas fa-check"></i> 高解像度 (800x800)</li>
+                            <li><i class="fas fa-check"></i> ロゴ埋め込み</li>
+                            <li><i class="fas fa-check"></i> スキャン解析</li>
+                            <li><i class="fas fa-check"></i> 一括生成</li>
+                        </ul>
+                        <button class="plan-btn premium-btn">デモ版で体験</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 QR Code Pro - ポートフォリオデモ版</p>
+                <p>🚀 このアプリケーションは技術デモンストレーションとして作成されています</p>
+                <div class="tech-stack">
+                    <span>HTML5</span>
+                    <span>CSS3</span>
+                    <span>JavaScript</span>
+                    <span>QRCode.js</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
